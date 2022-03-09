@@ -1,30 +1,28 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <div>
-    <a href="" class="text-red-400">cool</a>
+  <div class="absolute w-screen h-screen t-0 l-0">
+    <MenuElement/>
   </div>
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="absolute w-screen h-screen t-0 l-0 none">
+    <TournamentElement/>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue';
 import './assets/tailwind.css';
+import MenuElement from './components/MenuElement.vue';
+import TournamentElement from './components/TournamentElement.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
-  },
+    MenuElement,
+    TournamentElement
+  }
 };
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+.none {
+  display: none;
 }
 </style>
