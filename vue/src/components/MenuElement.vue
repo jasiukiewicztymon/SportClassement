@@ -14,7 +14,9 @@
                         </li>
                     </ul>
                 </div>
-                <label class="text-[2vw] md:text-[1.5vw] xl:text-[1vw] flex xl:justify-start justify-center content-center xl:content-start">{{ item1.date }}</label>
+                <div class="flex">
+                    <label class="text-[2vw] md:text-[1.5vw] xl:text-[1vw] flex xl:justify-start justify-center content-center xl:content-start">{{ item1.date }} <span v-if="item1.date.split('.')[0] == today[2] && item1.date.split('.')[1] == today[1] && item1.date.split('.')[2] == today[0]" class="ml-[1vw]">🟢</span><span v-else class="ml-[1vw]">🔴</span></label>
+                </div>
             </li>
         </ul>
     </div>
@@ -27,6 +29,7 @@ export default {
   data() {
     return {
       datas: data,
+      today: new Date().toJSON().slice(0,10).split('-'),
     };
   },
   methods: {
