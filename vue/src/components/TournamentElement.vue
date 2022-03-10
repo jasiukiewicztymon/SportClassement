@@ -21,7 +21,7 @@
                     <td class="p-[0.3vw]">{{ item2.draw }}</td>
                     <td class="p-[0.3vw]">{{ item2.loose }}</td>
                     <td class="p-[0.3vw]">{{ item2.goal1 }}</td>
-                    <td class="p-[0.3vw]">{{ item2.goal1 }}</td>
+                    <td class="p-[0.3vw]">{{ item2.goal2 }}</td>
                     <td class="p-[0.3vw]"><b>{{ (item2.win * 3 + item2.draw) }}</b></td>
                 </tr>
             </table>
