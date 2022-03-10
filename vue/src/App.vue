@@ -30,9 +30,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.none {
-  display: none;
-}
-</style>
