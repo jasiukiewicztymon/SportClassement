@@ -1,14 +1,15 @@
 <template>
     <header>
         <h1>Sport ranking</h1>
-        <nav>
+        <img src="../assets/public/menu.png">
+        <nav v-show="open">
             <ul>
                 <li>Home</li>
                 <li>About</li>
                 <li>Contact</li>
             </ul>
         </nav>
-        <div>
+        <div v-show="open">
             <div v-if="cookies">
                 <button>Your profile</button>
                 <button>Logout</button>
@@ -27,6 +28,16 @@
         data() {
             return {
                 cookies: false,
+                open: true
+            }
+        },
+        methods: {
+            hide() {
+                this.open = false
+                console.log("ok")
+            },
+            onResize() {
+                console.log('Resized')
             }
         }
     };
@@ -42,6 +53,8 @@ header
     grid-template-areas: "logo nav buttons"
     color: white
     background: #b18cff
+    img
+        display: none
     h1
         grid-area: logo
         display: flex
@@ -83,12 +96,16 @@ header
         justify-content: center
 @media screen and (max-width: 1400px) 
     header
+        width: 100%
+        height: 100%
         display: grid
-        grid-template-rows: 1fr
-        grid-template-columns: 1fr
-        grid-template-areas: "logo"
-        nav 
-            position: absolute
-        div 
-            position: absolute
+        grid-template-rows: 120px 1fr 1fr
+        grid-template-columns: 1fr 1fr
+        grid-template-areas: "logo menu" "nav nav" "buttons buttons"
+        color: white
+        background: #b18cff
+    header img 
+        width: 60px
+        height: 60px
+        display: flex
 </style>

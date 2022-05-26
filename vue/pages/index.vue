@@ -39,10 +39,10 @@
         },
         data() {
             return {
+                count: 0
             };
         },
         methods: {
-            
         }
     };
 </script>
