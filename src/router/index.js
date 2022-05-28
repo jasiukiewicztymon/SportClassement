@@ -5,6 +5,7 @@ import Authentification from '../views/Authentification.vue'
 import About from '../views/About.vue'
 import Contact from '../views/Contact.vue'
 import Dashboard from '../views/Dashboard.vue'
+import EmailConfirmation from '../views/EmailConfirmation.vue'
 import page404 from '../views/page404.vue'
 
 const router = createRouter({
@@ -15,7 +16,8 @@ const router = createRouter({
         { path: '/contact', name: 'Contact', component: Contact },
         { path: '/dashboard', name: 'Dashboard', component: Dashboard },
         { path: '/authentification/type/:type', name: 'Authentification' , component: Authentification},
-        { path: '/:pathMatch(.*)*', name: '404', component: page404 },
+        { path: '/emailconfirmation', name: 'EmailConfirmation', component: EmailConfirmation },
+        { path: '/:pathMatch(.*)*', name: '404', component: page404 }
     ]
 })
 

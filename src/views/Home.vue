@@ -1,10 +1,10 @@
 <template>
-    <div id="mainBox" class="mainBoxActive">
+    <div id="mainBox" :class="{ mainBoxActive: showMenu }">
         <header>
-            <nav v-if="!authentification && open">
+            <nav v-if="!authentification">
                 <div>
                     <h1>Sport ranking</h1>
-                    <img src="../assets/menu.png">
+                    <img src="../assets/menu.png" @click="showMenu = !showMenu">
                 </div>
                 <div>
                     <router-link to="/">Home</router-link>
@@ -16,10 +16,10 @@
                     <router-link to="/authentification/type/register">Register</router-link>
                 </div>
             </nav>
-            <nav v-if="authentification && open">
+            <nav v-else>
                 <div>
                     <h1>Sport ranking</h1>
-                    <img src="../assets/menu.png">
+                    <img src="../assets/menu.png" @click="showMenu = !showMenu">
                 </div>
                 <div>
                     <router-link to="/">Home</router-link>
@@ -80,11 +80,8 @@ export default {
     name: 'Home',
     data() {
         return {
-            style: {
-                purple: '#B18CFF'
-            },
             authentification: false,
-            open: true
+            showMenu: false
         }
     },
     created() {
@@ -92,7 +89,9 @@ export default {
     },
     methods: {
         resize(e) {
-
+            if (e.target.innerWidth > 1550) {
+                this.showMenu = false
+            }
         }
     }
 }
@@ -128,7 +127,7 @@ span::after {
     height: 10px;
     z-index: -1;
     display: flex;
-    background: #b18cff;
+    background: #a8e38d;
     margin-top: -12px;     
     margin-left: -3px; 
     transition: .3s ease; 
@@ -146,13 +145,13 @@ p {
     }
     .mainBoxActive {
         grid-template-rows: 600px 1fr 100px !important;
-        overflow: hidden;
     }
     #mainBox main {
-        margin-top: -480px;
+        margin-top: 0px;
     }
     .mainBoxActive main {
-        margin-top: unset !important;
+        margin-top: -480px !important;
+        z-index: -1;
     }
     nav {
         display: flex !important;
@@ -161,13 +160,60 @@ p {
     #mainBox nav div:nth-child(2), #mainBox nav div:nth-child(3) {
         display: none;
     }
-    .mainBoxActive nav div:nth-child(2), .mainBoxActive nav div:nth-child(3) {
+    .mainBoxActive nav div:nth-child(2) {
+        display: flex !important;
+        justify-content: center;
+        margin-top: 70px;
+    }
+    .mainBoxActive nav div:nth-child(3) {
         display: flex !important;
         flex-direction: column;
+        justify-content: center;
+    }
+    .mainBoxActive nav div:nth-child(2) a {
+        margin-bottom: 15px;
+    }
+    .mainBoxActive nav div:nth-child(3) a {
+        margin-top: 30px;
     }
     nav img {
         display: flex !important;
     }
+}
+@media screen and (max-width: 1000px) {
+    .mainBoxActive nav div:nth-child(2), .mainBoxActive nav div:nth-child(3) {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: 0px;
+    }
+    .mainBoxActive nav div:nth-child(2) a {
+        margin: 0px;
+        margin-bottom: 15px;
+    }
+    .mainBoxActive nav div:nth-child(3) a {
+        margin: 0px;
+        margin-top: 30px;
+    }
+    #projectCreation, #projectPricing {
+        display: flex !important;
+        flex-direction: column;
+    }
+    #projectPricing {
+        flex-direction: column-reverse;
+        width: 80% !important;
+        margin: 10% !important;
+    }
+    #projectPricing div:nth-child(1) {
+        margin-top: 30px;
+        transform: translateX(0%) !important;
+    }
+}
+body::-webkit-scrollbar {
+    width: 14px;
+}
+body::-webkit-scrollbar-thumb {
+    background: #a8e38d;
 }
 
 /*
@@ -177,6 +223,7 @@ Header style
 header {
     height: 100%;
     width: 100%;
+    border-bottom: 1px solid rgb(61, 61, 61);
 }
 nav {
     width: 100%;
@@ -186,7 +233,7 @@ nav {
     grid-template-columns: 3fr 5fr 4fr;
     grid-template-areas: "logo nav buttons";
     color: white;
-    background: #b18cff;
+    background: #a8e38d;
 }
 header img {
     width: 60px;
@@ -216,6 +263,7 @@ nav div:nth-child(3) a {
     width: 33%;
     min-width: 200px;
     border-radius: 10px;
+    border: 1px solid rgb(61, 61, 61);
 }
 nav div:nth-child(2) a {
     transition: .5s ease;
@@ -253,7 +301,7 @@ main {
     transition: .7s ease;
 }
 #projectCreation button:hover, #projectPricing button:hover {
-    background: #B18CFF;
+    background: #a8e38d;
     color: #fff;
 }
 #projectCreation {
@@ -304,7 +352,7 @@ footer a::after {
     height: 15px;
     position: relative;
     display: flex;
-    background: #b18cff;
+    background: #a8e38d;
     z-index: -1;
     transition: .2s ease;
     bottom: 10px;
