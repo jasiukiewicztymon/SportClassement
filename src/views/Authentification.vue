@@ -37,8 +37,8 @@
                     <div id="mailLogin">
                         <h2>Login with your mail</h2>
                         <div>
-                            <input type="text" name="email" placeholder="e-mail">
-                            <input type="text" name="password" placeholder="password">
+                            <input v-model="mailConnectInfo.email" type="text" name="email" placeholder="e-mail">
+                            <input v-model="mailConnectInfo.password" type="text" name="password" placeholder="password">
                             <button @click="loginWithEmail()">Login</button>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
 
 <script>
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
 import axios from 'axios';
 
 const firebaseConfig = {
@@ -106,6 +106,10 @@ export default {
             codeValue: {
                 name: "",
                 code: ""
+            },
+            mailConnectInfo: {
+                email: "",
+                password: ""
             }
         }
     },
@@ -122,7 +126,29 @@ export default {
             this.showMenu = false
         },
         loginWithGoogle() {
-            
+            const provider = new GoogleAuthProvider();
+
+            signInWithPopup(auth, provider)
+            .then((result) => {
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                const user = result.user;
+            }).catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                const email = error.customData.email;
+                const credential = GoogleAuthProvider.credentialFromError(error);
+            });
+        },
+        loginWithEmail() {
+            signInWithEmailAndPassword(auth, this.mailConnectInfo.email, this.mailConnectInfo.password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            });
         },
         codeValidation() {
             if (this.codeValue.name != "" && this.codeValue.name.length > 3) {
