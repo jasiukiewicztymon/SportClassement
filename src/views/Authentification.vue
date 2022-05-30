@@ -7,10 +7,10 @@
             <h1>E-mail verification</h1>
             <span id="timer">Expire in <b :style="{ color: verifycationCode.timerColor }">{{parseInt(verifycationCode.time / 60)}}:{{verifycationCode.time % 60 < 10 ? '0' : ''}}{{verifycationCode.time % 60}}</b><span @click="closeForm()">x</span></span>
             <div>
-                <input type="text" placeholder="your name">
-                <input type="text" placeholder="code">
+                <input v-model="codeValue.name" type="text" placeholder="your name">
+                <input v-model="codeValue.code" type="text" placeholder="code">
             </div>
-            <button>Submit</button>
+            <button @click="codeValidation()">Submit</button>
         </div>
     </div>
     <div id="mainBox" :class="{ mainBoxActive: showMenu }">
@@ -39,12 +39,12 @@
                         <div>
                             <input type="text" name="email" placeholder="e-mail">
                             <input type="text" name="password" placeholder="password">
-                            <button>Login</button>
+                            <button @click="loginWithEmail()">Login</button>
                         </div>
                     </div>
                     <div id="googleLogin">
                         <h2>Login with Google account</h2>
-                        <button>Login with Google</button>
+                        <button @click="loginWithGoogle()">Login with Google</button>
                     </div>
                 </div>
                 <div v-else>
@@ -66,7 +66,7 @@
 
 <script>
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, sendSignInLinkToEmail } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import axios from 'axios';
 
 const firebaseConfig = {
@@ -81,6 +81,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+var intervalTime = null;
 
 export default { 
     name: 'Home',
@@ -97,8 +99,13 @@ export default {
             verifycationCode: {
                 send: false,
                 time: 300,
-                try: 0,
-                timerColor: 'black'
+                try: 3,
+                timerColor: 'black',
+                code: ""
+            },
+            codeValue: {
+                name: "",
+                code: ""
             }
         }
     },
@@ -114,31 +121,74 @@ export default {
         hideMenu() {
             this.showMenu = false
         },
-        async createAccountEP() {
-            if (this.createAccount.password == this.createAccount.passwordConfirmation) {
-                if (this.createAccount.password.length > 7 && this.createAccount.password < 25) {
-                    const code = Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
-
-                    await axios.post(`http://localhost:4000/sendCode`, {
-                        email: this.createAccount.email,
-                        code: code
-                    })
-                    this.verifycationCode.time = 300;
-                    this.verifycationCode.send = true;
-                    document.querySelector("body").style.overflow = "hidden";
-                    var i = setInterval(() => {
-                        this.verifycationCode.time--;
-                        if (this.verifycationCode.time == 0) {
-                            clearInterval(i)
-                            this.verifycationCode.send = false;
-                        }
-                        if (this.verifycationCode.time <= 10) {
-                            this.verifycationCode.timerColor = 'red';
-                        }
-                    }, 1000)
+        loginWithGoogle() {
+            
+        },
+        codeValidation() {
+            if (this.codeValue.name != "" && this.codeValue.name.length > 3) {
+                if (this.codeValue.code != this.verifycationCode.code) {
+                    alert("Invalid code");
+                    this.verifycationCode.try--;
                 }
                 else {
-                    alert("The password is not long enough")
+                    this.verifycationCode.send = false;
+                    createUserWithEmailAndPassword(auth, this.createAccount.email, this.createAccount.password)
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                    })
+                    .catch((error) => {
+                        console.log(error.message)
+                    });
+
+                    updateProfile(auth.currentUser, {
+                        displayName: this.codeValue.name
+                    })
+
+                    alert("Account created")
+                }
+            }
+            else {
+                alert("Invalid name, it should have 4 character at least !")
+            }
+        },
+        async createAccountEP() {
+            if (this.createAccount.password == this.createAccount.passwordConfirmation) {
+                var emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+                if (this.createAccount.password.length > 7 && this.createAccount.password.length < 25) {
+                    if (this.createAccount.email.match(emailRegex)) {
+                        const code = Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString() + Math.floor(Math.random() * 10).toString();
+                        this.verifycationCode.code = code.toString();
+
+                        await axios.post(`http://localhost:4000/sendCode`, {
+                            email: this.createAccount.email,
+                            code: code
+                        })
+
+                        this.verifycationCode.time = 300;
+                        this.verifycationCode.try = 3;
+                        this.verifycationCode.timerColor = 'black';
+                        this.verifycationCode.send = true;
+                        document.querySelector("body").style.overflow = "hidden";
+
+                        intervalTime = setInterval(() => {
+                            this.verifycationCode.time--
+
+                            if (this.verifycationCode.time <= 10) {
+                                this.verifycationCode.timerColor = 'red';
+                            }
+
+                            if (this.verifycationCode.time <= 0 || this.verifycationCode.try == 0) {
+                                clearInterval(intervalTime);
+                                this.verifycationCode.send = false;
+                            }
+                        }, 1000)
+                    }
+                    else {
+                        alert("Invalid mail")
+                    }
+                }
+                else {
+                    alert("The password is not good, it should have at least 8 character and a max of 24")
                 }
             }
             else {
@@ -148,6 +198,7 @@ export default {
         closeForm() {
             this.verifycationCode.send = false
             document.querySelector("body").style.overflow = "scroll";
+            clearInterval(intervalTime);
         }
     }
 }

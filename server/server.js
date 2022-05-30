@@ -14,7 +14,7 @@ app.use(cors(corsOptions)).use(bodyParser.json()).use(bodyParser.urlencoded({ext
 
 app.post('/sendCode', (req, res) => {
     try {
-        sendCode(req.body.email, req.body.code);
+        sendCode(req.body.email, req.body.code)
         res.send("The code is sent")
     }
     catch (err) {
